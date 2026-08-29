@@ -1,0 +1,53 @@
+{
+  "name": "pi-subagents-lean",
+  "version": "0.16.1-lean.1",
+  "private": true,
+  "type": "module",
+  "description": "Token-lean single-schema facade over pi-subagents with on-demand operation help.",
+  "license": "MIT",
+  "author": "kunkun9527",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kunkun9527/pi-subagents-lean.git"
+  },
+  "homepage": "https://github.com/kunkun9527/pi-subagents-lean#readme",
+  "bugs": {
+    "url": "https://github.com/kunkun9527/pi-subagents-lean/issues"
+  },
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "subagents",
+    "multi-agent",
+    "token-efficient"
+  ],
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "check": "npm run typecheck && npm test"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "0.34.52",
+    "@tintinweb/pi-subagents": "0.16.1"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": ">=0.84.1 <1.0.0",
+    "@earendil-works/pi-coding-agent": ">=0.84.1 <1.0.0",
+    "@earendil-works/pi-tui": ">=0.84.1 <1.0.0"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-ai": "0.84.3",
+    "@earendil-works/pi-coding-agent": "0.84.3",
+    "@earendil-works/pi-tui": "0.84.3",
+    "jiti": "2.7.0",
+    "typescript": "5.9.3"
+  },
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}
