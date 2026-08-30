@@ -55,6 +55,19 @@ subagent
 
 上游包包含内置 `general-purpose`、`Explore` 和 `Plan` 定义；你的安装还可能暴露其他自定义类型。
 
+## 实测初始化上下文占用
+
+仅启用本扩展时，它持续贡献给模型的初始化上下文为：
+
+| 模型可见工具 | Lean | 上游 `@tintinweb/pi-subagents@0.16.1` |
+| --- | ---: | ---: |
+| Facade / `Agent` | `subagent`：268 | `Agent`：1,111 |
+| 结果获取 | 已包含在 facade 中 | `get_subagent_result`：149 |
+| Steering | 已包含在 facade 中 | `steer_subagent`：156 |
+| **合计** | **268** | **1,416** |
+
+相比固定版本的上游扩展，减少 **1,148 tokens（81.1%）**。测量使用 Pi 0.84.4 和 `pi-context-view@0.4.3`，在全新隔离会话中只启用目标扩展，并排除 Pi 内置工具、skills、context files、消息及无关扩展。Context View 按 `ceil(字符数 / 4)` 估算，因此这些是可复现的上下文占用估值，不是 GPT tokenizer 的精确计数。未计入不会发送给模型的纯运行时 UI 和 slash commands。
+
 ## 版本
 
 上游运行时固定为 `@tintinweb/pi-subagents@0.16.1`。

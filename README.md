@@ -55,6 +55,19 @@ After installation:
 
 The upstream package includes built-in `general-purpose`, `Explore`, and `Plan` definitions; your installation may expose additional custom types.
 
+## Measured initialization footprint
+
+With only this extension enabled, its recurring model-facing initialization contribution is:
+
+| Model-facing tool | Lean | Upstream `@tintinweb/pi-subagents@0.16.1` |
+| --- | ---: | ---: |
+| Facade / `Agent` | `subagent`: 268 | `Agent`: 1,111 |
+| Result retrieval | Included in facade | `get_subagent_result`: 149 |
+| Steering | Included in facade | `steer_subagent`: 156 |
+| **Total** | **268** | **1,416** |
+
+That is **1,148 fewer tokens (81.1%)** than the pinned upstream extension. The measurement used Pi 0.84.4 and `pi-context-view@0.4.3` in a fresh isolated session, excluding Pi built-in tools, skills, context files, messages, and unrelated extensions. Context View estimates text as `ceil(characters / 4)`, so these are reproducible context-footprint estimates rather than exact GPT tokenizer counts. Runtime-only UI and slash commands are not included because they are not sent to the model.
+
 ## Versions
 
 The upstream runtime is pinned to `@tintinweb/pi-subagents@0.16.1`.
