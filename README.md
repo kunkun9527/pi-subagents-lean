@@ -1,54 +1,71 @@
 # pi-subagents-lean
 
-[中文](#中文) · [English](#english)
+[简体中文](README.zh-CN.md)
 
-## 中文
+A token-lean Pi facade over [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents). It keeps the complete upstream subagent runtime and routes its provider-facing operations through one compact schema.
 
-`pi-subagents-lean` 是 [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents) 的轻量 Pi 包装层。它保留上游子代理运行时，把 `Agent`、`get_subagent_result` 和 `steer_subagent` 收拢为一个小 schema；详细参数通过 `help` 按需查看。
+## What it keeps
 
-### 模型可见工具
+- Upstream subagent discovery, spawning, background execution, result retrieval, steering, rendering, and lifecycle behavior.
+- The upstream `Agent`, `get_subagent_result`, and `steer_subagent` operations behind one `subagent` facade.
+- Full advanced parameters through on-demand `help` and JSON input.
 
-- `subagent`
+This package does **not** replace the upstream runtime with a minimal implementation. It only reduces the persistent model-facing tool surface.
 
-`subagent` 的 `op` 为 `run`、`result`、`steer` 或 `help`。运行时默认 agent 定义来自上游包内置的 `general-purpose`、`Explore` 和 `Plan`。
-
-本仓库**不包含**任何安装者的自定义 agent 文件、项目 `.pi/agents`、会话记录或 memory。上游运行时仍可能按安装者自己的 Pi 配置扫描自定义 agents；这由上游负责，不会被本仓库打包进去。
-
-### 安装
+## Install
 
 ```bash
 pi install git:github.com/kunkun9527/pi-subagents-lean
 ```
 
-不要和原版 `pi-subagents` wrapper 同时加载，以免重复注册子代理工具。
+Do not load it together with another `pi-subagents` wrapper, or subagent tools may be registered twice.
 
-### 开发
+## Use
+
+The model sees one tool:
+
+```text
+subagent
+```
+
+Supported operations are `run`, `result`, `steer`, and `help`.
+
+```json
+{
+  "op": "run",
+  "prompt": "Find the implementation of the cache key.",
+  "description": "Locate cache key",
+  "subagent_type": "Explore",
+  "run_in_background": true
+}
+```
+
+Use `result` with `agent_id` to inspect a completed run and `steer` with `agent_id` plus `message` to redirect a running agent. Use `help` for advanced upstream parameters.
+
+## Important: review your agent definitions
+
+The upstream runtime can discover built-in agents and custom agents from global, workspace, and project Pi locations. This repository does not ship your private agents, sessions, or memory, but it intentionally preserves that upstream discovery behavior.
+
+After installation:
+
+1. Inspect every discovered agent definition and set its `model` to a provider/model available in your Pi environment.
+2. Delete agent types you do not want.
+3. Rename or modify agent types, prompts, tools, and extension lists to match your workflow.
+4. Check duplicate names: a custom agent with the same name may override a built-in type depending on upstream discovery precedence.
+
+The upstream package includes built-in `general-purpose`, `Explore`, and `Plan` definitions; your installation may expose additional custom types.
+
+## Versions
+
+The upstream runtime is pinned to `@tintinweb/pi-subagents@0.16.1`.
+
+## Development
 
 ```bash
 npm ci
 npm run check
 ```
 
-上游依赖固定为 `@tintinweb/pi-subagents@0.16.1`。
+## License and upstream
 
-## English
-
-`pi-subagents-lean` is a small Pi wrapper around [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents). It preserves the upstream subagent runtime while routing `Agent`, `get_subagent_result`, and `steer_subagent` through one small schema; complete operation parameters are available on demand through `help`.
-
-It exposes one model-facing tool, `subagent`, with `op` values `run`, `result`, `steer`, and `help`. The upstream package supplies the built-in `general-purpose`, `Explore`, and `Plan` agent definitions.
-
-This repository ships **no installer-specific custom agent files**, project `.pi/agents`, sessions, or memory. The upstream runtime may still scan custom agents from the installing user's own Pi configuration; that behavior belongs to upstream and is not packaged here.
-
-Install:
-
-```bash
-pi install git:github.com/kunkun9527/pi-subagents-lean
-```
-
-Do not load another `pi-subagents` wrapper at the same time, or the subagent tools may be registered twice.
-
-Validate locally with `npm ci && npm run check`.
-
-## License
-
-MIT. This project is a wrapper around the MIT-licensed `@tintinweb/pi-subagents` project.
+MIT. This project wraps the MIT-licensed [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents).
