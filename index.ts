@@ -5,25 +5,6 @@ import { Type } from "@sinclair/typebox";
 import { Value } from "@sinclair/typebox/value";
 import subagents from "@tintinweb/pi-subagents/src/index.ts";
 import { Text } from "@earendil-works/pi-tui";
-const COLLAPSED_DISPLAY_SERVICE = Symbol.for(
-  "@local/pi-collapsed-tools.display-service.v1",
-);
-
-type CollapsedDisplayTool = { name: string };
-type CollapsedDisplayService = {
-  readonly version: 1;
-  decorate<T extends CollapsedDisplayTool>(tool: T): T;
-};
-
-function decorateWithCollapsedDisplay<T extends CollapsedDisplayTool>(tool: T): T {
-  const services = globalThis as unknown as Record<PropertyKey, unknown>;
-  const candidate = services[COLLAPSED_DISPLAY_SERVICE];
-  if (!candidate || typeof candidate !== "object") return tool;
-  const service = candidate as Partial<CollapsedDisplayService>;
-  return service.version === 1 && typeof service.decorate === "function"
-    ? service.decorate(tool)
-    : tool;
-}
 
 type CapturedTool = ToolDefinition<any, any, any>;
 type UpstreamExtension = (pi: ExtensionAPI) => void;
@@ -173,7 +154,7 @@ export function createSubagentsFacade(
         return target.execute(callId, routedParams, signal, onUpdate, ctx);
       },
     };
-    pi.registerTool(decorateWithCollapsedDisplay(facadeTool));
+    pi.registerTool(facadeTool);
   };
 }
 
