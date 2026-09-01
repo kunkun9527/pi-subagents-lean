@@ -1,6 +1,6 @@
 # @ssk_dev/pi-subagents-lean
 
-> **Pi Subagents 精简版插件，保留全部功能，仅需 268 初始化 Token，相比原版减少 81%。**
+> **Pi Subagents 精简版扩展，保留全部功能，仅需 268 初始化 Token，相比原版减少 81%。**
 > **完整配置参考：** [查看 Pi Lean Setup](https://github.com/kunkun9527/my-lean-pi-setup)
 
 [English](README.md)
@@ -13,7 +13,7 @@
 * 统一工具入口：将原版的 `Agent`、`get_subagent_result` 与 `steer_subagent` 整合为单个 `subagent` 工具。
 * 按需加载高级参数：复杂参数和完整 Schema 仅在调用 `help` 或传入 JSON 时展开，不再默认常驻于 Prompt 中。
 
-本插件并未简化或重写核心逻辑，而是仅对提供给模型的 Prompt 工具描述进行了深度精简。
+本扩展并未简化或重写核心逻辑，而是仅对提供给模型的 Prompt 工具描述进行了深度精简。
 
 ## 安装
 
@@ -21,7 +21,7 @@
 pi install npm:@ssk_dev/pi-subagents-lean
 ```
 
-请勿与其它 `pi-subagents` 包装插件同时加载，以防重复注册工具。
+请勿与其它 `pi-subagents` 包装扩展同时加载，以防重复注册工具。
 
 ## 使用方法
 
@@ -62,7 +62,7 @@ subagent
 
 ## 初始化上下文占用对比
 
-单独启用本插件时，注入到模型初始上下文中的 Token 占用实测如下：
+单独启用本扩展时，注入到模型初始上下文中的 Token 占用实测如下：
 
 | 模型可见工具 | Lean 精简版 | 原版 `@tintinweb/pi-subagents@0.16.1` |
 | --- | ---: | ---: |
