@@ -1,6 +1,6 @@
-# pi-subagents-lean
+# @ssk_dev/pi-subagents-lean
 
-> **Lean Pi subagent plugin, same functionality — only ~268 vs ~1,416 initialization tokens.**
+> **Lean Pi subagent plugin, same functionality — 268 initialization tokens, 81% fewer than the original.**
 > [See my full setup for Pi](https://github.com/kunkun9527/my-lean-pi-setup)
 
 [简体中文](README.zh-CN.md)
@@ -18,7 +18,7 @@ This package does **not** replace the upstream runtime with a minimal implementa
 ## Install
 
 ```bash
-pi install git:github.com/kunkun9527/pi-subagents-lean
+pi install npm:@ssk_dev/pi-subagents-lean
 ```
 
 Do not load it together with another `pi-subagents` wrapper, or subagent tools may be registered twice.

@@ -1,6 +1,6 @@
-# pi-subagents-lean
+# @ssk_dev/pi-subagents-lean
 
-> **Lean Pi subagent 插件，功能相同：约 268 vs 1,416 个初始化 tokens。**
+> **Lean Pi subagent 插件，功能相同：268 个初始化 tokens，较原插件减少 81%。**
 > **整套配置：** [查看 Pi Lean Setup](https://github.com/kunkun9527/my-lean-pi-setup)
 
 [English](README.md)
@@ -18,7 +18,7 @@
 ## 安装
 
 ```bash
-pi install git:github.com/kunkun9527/pi-subagents-lean
+pi install npm:@ssk_dev/pi-subagents-lean
 ```
 
 不要同时加载另一个 `pi-subagents` 包装层，否则 subagent 工具可能被重复注册。
