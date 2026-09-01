@@ -1,6 +1,6 @@
 {
   "name": "@ssk_dev/pi-subagents-lean",
-  "version": "0.16.1",
+  "version": "0.16.2",
   "type": "module",
   "description": "Lean Pi subagent plugin, same functionality — 268 initialization tokens, 81% fewer than the original.",
   "license": "MIT",
