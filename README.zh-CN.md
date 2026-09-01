@@ -1,19 +1,19 @@
 # @ssk_dev/pi-subagents-lean
 
-> **Lean Pi subagent 插件，功能相同：268 个初始化 tokens，较原插件减少 81%。**
-> **整套配置：** [查看 Pi Lean Setup](https://github.com/kunkun9527/my-lean-pi-setup)
+> **Pi Subagents 精简版插件，保留全部功能，仅需 268 初始化 Token，相比原版减少 81%。**
+> **完整配置参考：** [查看 Pi Lean Setup](https://github.com/kunkun9527/my-lean-pi-setup)
 
 [English](README.md)
 
-[`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents) 的 token 精简版 Pi facade。它保留完整的上游 subagent 运行时，并通过一个紧凑 schema 路由面向模型的操作。
+基于 [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents) 的精简封装。在完整保留上游 Subagent 功能与运行时的同时，将所有操作收束为一个紧凑的工具接口，显著降低上下文占用。
 
-## 保留的能力
+## 核心特性
 
-- 上游的 subagent 发现、启动、后台执行、结果获取、steering、渲染和生命周期行为。
-- 通过一个 `subagent` facade 提供上游 `Agent`、`get_subagent_result` 和 `steer_subagent` 操作。
-- 通过按需 `help` 和 JSON input 使用完整高级参数。
+* 完整保留上游能力：包括 Agent 发现、后台派生运行、结果获取、动态引导（Steering）以及完整的生命周期管理。
+* 统一工具入口：将原版的 `Agent`、`get_subagent_result` 与 `steer_subagent` 整合为单个 `subagent` 工具。
+* 按需加载高级参数：复杂参数和完整 Schema 仅在调用 `help` 或传入 JSON 时展开，不再默认常驻于 Prompt 中。
 
-本包**不会**用最小化实现替换上游运行时，只减少长期存在的模型可见工具表面。
+本插件并未简化或重写核心逻辑，而是仅对提供给模型的 Prompt 工具描述进行了深度精简。
 
 ## 安装
 
@@ -21,17 +21,17 @@
 pi install npm:@ssk_dev/pi-subagents-lean
 ```
 
-不要同时加载另一个 `pi-subagents` 包装层，否则 subagent 工具可能被重复注册。
+请勿与其它 `pi-subagents` 包装插件同时加载，以防重复注册工具。
 
-## 使用
+## 使用方法
 
-模型只看到一个工具：
+模型仅会看到一个工具：
 
 ```text
 subagent
 ```
 
-支持的操作为 `run`、`result`、`steer` 和 `help`。
+支持的操作包括 `run`、`result`、`steer` 和 `help`。
 
 ```json
 {
@@ -43,45 +43,49 @@ subagent
 }
 ```
 
-使用带 `agent_id` 的 `result` 查看已完成任务；使用带 `agent_id` 和 `message` 的 `steer` 调整运行中的 agent。高级上游参数通过 `help` 查看。
+* 使用 `result` 搭配 `agent_id` 查看已完成任务的输出结果。
+* 使用 `steer` 搭配 `agent_id` 与 `message` 调整正在运行中的 Agent。
+* 使用 `help` 按需查看上游高级参数配置。
 
-## 重要：检查你的 agent 定义
+## 重要提醒：检查 Agent 定义配置
 
-上游运行时可以从全局、workspace 和项目 Pi 位置发现内置及自定义 agents。本仓库不会携带你的私有 agents、sessions 或 memory，但会有意保留这种上游发现行为。
+上游运行时会自动扫描全局、工作区及项目目录中的内置与自定义 Agent。本仓库不包含任何私有 Agent、会话或记忆配置，但完整继承了这一发现机制。
 
-安装后：
+安装完成后建议：
 
-1. 检查每个被发现的 agent 定义，将其 `model` 设置为你的 Pi 环境中可用的供应商/模型。
-2. 删除你不需要的 agent 类型。
-3. 按工作流重命名或修改 agent 类型、提示词、工具和扩展列表。
-4. 检查重名：根据上游发现优先级，同名自定义 agent 可能覆盖内置类型。
+1. 检查扫描到的所有 Agent 定义，确保其 `model` 字段指向你当前环境中可用的模型。
+2. 移除不需要的 Agent 类型。
+3. 根据个人工作流调整 Prompt、工具绑定及扩展白名单。
+4. 注意命名冲突：同名的自定义 Agent 可能会根据优先级覆盖内置类型。
 
-上游包包含内置 `general-purpose`、`Explore` 和 `Plan` 定义；你的安装还可能暴露其他自定义类型。
+原版自带 `general-purpose`、`Explore` 和 `Plan` 三种预设，你的环境可能会额外加载其他自定义类型。
 
-## 实测初始化上下文占用
+## 初始化上下文占用对比
 
-仅启用本扩展时，它持续贡献给模型的初始化上下文为：
+单独启用本插件时，注入到模型初始上下文中的 Token 占用实测如下：
 
-| 模型可见工具 | Lean | 上游 `@tintinweb/pi-subagents@0.16.1` |
+| 模型可见工具 | Lean 精简版 | 原版 `@tintinweb/pi-subagents@0.16.1` |
 | --- | ---: | ---: |
-| Facade / `Agent` | `subagent`：268 | `Agent`：1,111 |
-| 结果获取 | 已包含在 facade 中 | `get_subagent_result`：149 |
-| Steering | 已包含在 facade 中 | `steer_subagent`：156 |
+| Facade / `Agent` | `subagent`: 268 | `Agent`: 1,111 |
+| 结果获取 | 已收敛至统一工具中 | `get_subagent_result`: 149 |
+| 任务引导 (Steering) | 已收敛至统一工具中 | `steer_subagent`: 156 |
 | **合计** | **268** | **1,416** |
 
-相比固定版本的上游扩展，减少 **1,148 tokens（81.1%）**。测量使用 Pi 0.84.4 和 `pi-context-view@0.4.3`，在全新隔离会话中只启用目标扩展，并排除 Pi 内置工具、skills、context files、消息及无关扩展。Context View 按 `ceil(字符数 / 4)` 估算，因此这些是可复现的上下文占用估值，不是 GPT tokenizer 的精确计数。未计入不会发送给模型的纯运行时 UI 和 slash commands。
+相比固定版本的上游扩展，初始开销减少了 **1,148 tokens（81.1%）**。
 
-## 版本
+测试环境为 Pi 0.84.4 与 `pi-context-view@0.4.3` 独立会话，排除了 Pi 内置工具、Skills、上下文文件与无关扩展。Context View 按 `ceil(字符数 / 4)` 估算。未计入不会发送给模型的纯运行时 UI 与 Slash 命令。
 
-上游运行时固定为 `@tintinweb/pi-subagents@0.16.1`。
+## 版本说明
 
-## 开发
+上游运行时锁定为 `@tintinweb/pi-subagents@0.16.1`。
+
+## 本地开发
 
 ```bash
 npm ci
 npm run check
 ```
 
-## 许可证与上游
+## 开源协议与致谢
 
-MIT。本项目包装了采用 MIT 许可证的 [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents)。
+MIT 协议。本项目封装自采用 MIT 协议的 [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents)。
