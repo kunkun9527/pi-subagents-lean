@@ -1,6 +1,6 @@
 # @ssk_dev/pi-subagents-lean
 
-> **Lean Pi subagent extension with identical features: 268 initialization tokens, 81% lighter than original.**
+> **Lean Pi subagents extension with full features: 268 initial tokens (81% lighter than original).**
 > [See my full setup for Pi](https://github.com/kunkun9527/my-lean-pi-setup)
 
 [简体中文](README.zh-CN.md)
