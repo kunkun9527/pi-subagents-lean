@@ -2,7 +2,7 @@
   "name": "pi-subagents-lean",
   "version": "0.16.1",
   "type": "module",
-  "description": "Only ~268 initialization tokens (reduced from ~1,416 tokens).",
+  "description": "Lean Pi subagent plugin, same functionality — only ~268 vs ~1,416 initialization tokens.",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

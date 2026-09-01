@@ -1,6 +1,6 @@
 # pi-subagents-lean
 
-> **Only ~268 initialization tokens (reduced from ~1,416 tokens).**
+> **Lean Pi subagent plugin, same functionality — only ~268 vs ~1,416 initialization tokens.**
 > [See my full setup for Pi](https://github.com/kunkun9527/my-lean-pi-setup)
 
 [简体中文](README.zh-CN.md)
