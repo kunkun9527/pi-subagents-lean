@@ -1,6 +1,6 @@
 # pi-subagents-lean
 
-> **仅占用约 268 tokens：极度节省 Token 的 Pi subagent 插件（模型可见初始化上下文）。**
+> **仅需约 268 个初始化 tokens（从约 1,416 tokens 降低）。**
 > **整套配置：** [查看 Pi Lean Setup](https://github.com/kunkun9527/my-lean-pi-setup)
 
 [English](README.md)

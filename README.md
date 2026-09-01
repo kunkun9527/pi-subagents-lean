@@ -1,6 +1,6 @@
 # pi-subagents-lean
 
-> **Only ~268 model-facing initialization tokens — an extremely token-efficient Pi subagent plugin.**
+> **Only ~268 initialization tokens (reduced from ~1,416 tokens).**
 > **Setup:** [Install the complete Pi Lean Setup](https://github.com/kunkun9527/my-lean-pi-setup)
 
 [简体中文](README.zh-CN.md)
