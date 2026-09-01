@@ -1,5 +1,8 @@
 # pi-subagents-lean
 
+> **Only ~268 model-facing initialization tokens — an extremely token-efficient Pi subagent plugin.**
+> **Setup:** [Install the complete Pi Lean Setup](https://github.com/kunkun9527/my-lean-pi-setup)
+
 [简体中文](README.zh-CN.md)
 
 A token-lean Pi facade over [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents). It keeps the complete upstream subagent runtime and routes its provider-facing operations through one compact schema.
