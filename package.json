@@ -1,10 +1,12 @@
 {
-  "name": "pi-subagents-lean",
-  "version": "0.16.1-lean.1",
-  "private": true,
+  "name": "@ssk_dev/pi-subagents-lean",
+  "version": "0.16.6",
   "type": "module",
-  "description": "Token-lean single-schema facade over pi-subagents with on-demand operation help.",
+  "description": "Lean Pi subagents extension with full features: 268 initial tokens (81% fewer than original).",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "kunkun9527",
   "repository": {
     "type": "git",
@@ -20,6 +22,12 @@
     "subagents",
     "multi-agent",
     "token-efficient"
+  ],
+  "files": [
+    "index.ts",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE"
   ],
   "engines": {
     "node": ">=22.19.0"
