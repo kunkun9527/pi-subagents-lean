@@ -1,6 +1,6 @@
 # @ssk_dev/pi-subagents-lean
 
-> **Lean Pi subagents extension with full features: 268 initial tokens (81% fewer than original).**
+> **Lean Pi subagents extension with full features: 268 initial tokens (96.5% fewer than current upstream).**
 > [See my full setup for Pi](https://github.com/kunkun9527/my-lean-pi-setup)
 
 [简体中文](README.zh-CN.md)
@@ -31,7 +31,7 @@ The model interacts with a single tool:
 subagent
 ```
 
-Supported operations include `run`, `result`, `steer`, and `help`.
+Supported operations include `run`, `result`, `steer`, `workflow`, and `help`.
 
 ```json
 {
@@ -64,33 +64,34 @@ The upstream package includes built-in `general-purpose`, `Explore`, and `Plan` 
 
 With only this extension enabled, its recurring initialization overhead in the model context is:
 
-| Model-facing tool | Lean | Upstream `@tintinweb/pi-subagents@0.16.1` |
+| Model-facing tool | Lean | Upstream `@tintinweb/pi-subagents@0.19.0` |
 | --- | ---: | ---: |
-| Facade / `Agent` | `subagent`: 268 | `Agent`: 1,111 |
-| Result retrieval | Included in facade | `get_subagent_result`: 149 |
-| Steering | Included in facade | `steer_subagent`: 156 |
-| **Total** | **268** | **1,416** |
+| Facade / `Agent` | `subagent`: 268 | `Agent`: 1,487 |
+| Workflow | Included in facade | `SubagentWorkflow`: 5,722 |
+| Result retrieval | Included in facade | `get_subagent_result`: 183 |
+| Steering | Included in facade | `steer_subagent`: 183 |
+| **Total** | **268** | **7,575** |
 
-This saves **1,148 tokens (81.1%)** compared to the pinned upstream package.
-
+This saves **7,307 tokens (96.5%)** compared to the current upstream package.
 The benchmark was measured on Pi 0.84.4 with `pi-context-view@0.4.3` in a fresh isolated session, excluding built-in tools, skills, context files, and unrelated extensions. Context View estimates tokens as `ceil(characters / 4)`. Pure runtime UI elements and slash commands are excluded as they are not sent to the model.
 
 ## Measured initialization footprint
 
 With only this extension enabled, its recurring model-facing initialization contribution is:
 
-| Model-facing tool | Lean | Upstream `@tintinweb/pi-subagents@0.16.1` |
+| Model-facing tool | Lean | Upstream `@tintinweb/pi-subagents@0.19.0` |
 | --- | ---: | ---: |
-| Facade / `Agent` | `subagent`: 268 | `Agent`: 1,111 |
-| Result retrieval | Included in facade | `get_subagent_result`: 149 |
-| Steering | Included in facade | `steer_subagent`: 156 |
-| **Total** | **268** | **1,416** |
+| Facade / `Agent` | `subagent`: 268 | `Agent`: 1,487 |
+| Workflow | Included in facade | `SubagentWorkflow`: 5,722 |
+| Result retrieval | Included in facade | `get_subagent_result`: 183 |
+| Steering | Included in facade | `steer_subagent`: 183 |
+| **Total** | **268** | **7,575** |
 
-That is **1,148 fewer tokens (81.1%)** than the pinned upstream extension. The measurement used Pi 0.84.4 and `pi-context-view@0.4.3` in a fresh isolated session, excluding Pi built-in tools, skills, context files, messages, and unrelated extensions. Context View estimates text as `ceil(characters / 4)`, so these are reproducible context-footprint estimates rather than exact GPT tokenizer counts. Runtime-only UI and slash commands are not included because they are not sent to the model.
+That is **7,307 fewer tokens (96.5%)** than the current upstream extension. The measurement used Pi 0.84.4 and `pi-context-view@0.4.3` in a fresh isolated session, excluding Pi built-in tools, skills, context files, messages, and unrelated extensions. Context View estimates text as `ceil(characters / 4)`, so these are reproducible context-footprint estimates rather than exact GPT tokenizer counts. Runtime-only UI and slash commands are not included because they are not sent to the model.
 
 ## Versions
 
-Upstream runtime is pinned to `@tintinweb/pi-subagents@0.16.1`.
+Upstream runtime is pinned to `@tintinweb/pi-subagents@0.19.0`.
 
 ## Development
 

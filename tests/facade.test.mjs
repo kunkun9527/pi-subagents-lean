@@ -10,7 +10,7 @@ const { createSubagentsFacade } = extensionModule;
 
 function makeFakeUpstream(calls = []) {
   return (pi) => {
-    for (const name of ["Agent", "get_subagent_result", "steer_subagent"]) {
+    for (const name of ["Agent", "get_subagent_result", "steer_subagent", "SubagentWorkflow"]) {
       const marker = Type.Optional(Type.String({ description: `${name} marker` }));
       const parameters = name === "Agent"
         ? Type.Object({
@@ -26,11 +26,22 @@ function makeFakeUpstream(calls = []) {
               wait: Type.Optional(Type.Boolean()),
               verbose: Type.Optional(Type.Boolean()),
             })
-          : Type.Object({
-              marker,
-              agent_id: Type.String(),
-              message: Type.String(),
-            });
+          : name === "SubagentWorkflow"
+            ? Type.Object({
+                marker,
+                script: Type.Optional(Type.String()),
+                scriptPath: Type.Optional(Type.String()),
+                name: Type.Optional(Type.String()),
+                args: Type.Optional(Type.Any()),
+                resumeFromRunId: Type.Optional(Type.String()),
+                title: Type.Optional(Type.String()),
+                description: Type.Optional(Type.String()),
+              })
+            : Type.Object({
+                marker,
+                agent_id: Type.String(),
+                message: Type.String(),
+              });
       pi.registerTool({
         name,
         description: `${name} full description`,
@@ -69,14 +80,14 @@ function makePi() {
   return pi;
 }
 
-test("registers one subagent facade instead of three provider tools", () => {
+test("registers one subagent facade over the upstream tools", () => {
   assert.equal(typeof createSubagentsFacade, "function");
   const pi = makePi();
   createSubagentsFacade(makeFakeUpstream())(pi);
 
   assert.deepEqual(pi.tools.map((tool) => tool.name), ["subagent"]);
   assert.deepEqual(pi.tools[0].parameters.required, ["op"]);
-  assert.deepEqual(pi.tools[0].parameters.properties.op.enum, ["run", "result", "steer", "help"]);
+  assert.deepEqual(pi.tools[0].parameters.properties.op.enum, ["run", "result", "steer", "workflow", "help"]);
 });
 
 test("run forwards common fields and the complete execution context to Agent", async () => {
@@ -188,6 +199,25 @@ test("result and steer route to their original tools", async () => {
     },
   ]);
 });
+
+test("workflow routes JSON input to the upstream workflow tool", async () => {
+  const calls = [];
+  const pi = makePi();
+  createSubagentsFacade(makeFakeUpstream(calls))(pi);
+  const script = "export const meta = { name: 'batch', description: 'Run batch' };";
+
+  await pi.tools[0].execute(
+    "call-workflow",
+    { op: "workflow", input: JSON.stringify({ script, args: { batch: 2 } }) },
+    undefined,
+    undefined,
+    { cwd: "C:/work" },
+  );
+
+  assert.deepEqual(calls[0].name, "SubagentWorkflow");
+  assert.deepEqual(calls[0].params, { script, args: { batch: 2 } });
+});
+
 
 test("help discloses the original operation schema without executing it", async () => {
   const calls = [];

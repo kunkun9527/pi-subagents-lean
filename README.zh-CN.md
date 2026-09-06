@@ -1,6 +1,6 @@
 # @ssk_dev/pi-subagents-lean
 
-> **Pi Subagents 精简版扩展，保留全部功能，仅需 268 初始化 Token，相比原版减少 81%。**
+> **Pi Subagents 精简版扩展，保留全部功能，仅需 268 初始化 Token，相比当前上游减少 96.5%。**
 > **完整配置参考：** [查看 Pi Lean Setup](https://github.com/kunkun9527/my-lean-pi-setup)
 
 [English](README.md)
@@ -31,7 +31,7 @@ pi install npm:@ssk_dev/pi-subagents-lean
 subagent
 ```
 
-支持的操作包括 `run`、`result`、`steer` 和 `help`。
+支持的操作包括 `run`、`result`、`steer`、`workflow` 和 `help`。
 
 ```json
 {
@@ -64,20 +64,19 @@ subagent
 
 单独启用本扩展时，注入到模型初始上下文中的 Token 占用实测如下：
 
-| 模型可见工具 | Lean 精简版 | 原版 `@tintinweb/pi-subagents@0.16.1` |
+| 模型可见工具 | Lean 精简版 | 原版 `@tintinweb/pi-subagents@0.19.0` |
 | --- | ---: | ---: |
-| Facade / `Agent` | `subagent`: 268 | `Agent`: 1,111 |
-| 结果获取 | 已收敛至统一工具中 | `get_subagent_result`: 149 |
-| 任务引导 (Steering) | 已收敛至统一工具中 | `steer_subagent`: 156 |
-| **合计** | **268** | **1,416** |
+| Facade / `Agent` | `subagent`: 268 | `Agent`: 1,487 |
+| Workflow | 已整合到 Facade | `SubagentWorkflow`: 5,722 |
+| 结果获取 | 已整合到 Facade | `get_subagent_result`: 183 |
+| 任务引导（Steering） | 已整合到 Facade | `steer_subagent`: 183 |
+| **合计** | **268** | **7,575** |
 
-相比固定版本的上游扩展，初始开销减少了 **1,148 tokens（81.1%）**。
-
-测试环境为 Pi 0.84.4 与 `pi-context-view@0.4.3` 独立会话，排除了 Pi 内置工具、Skills、上下文文件与无关扩展。Context View 按 `ceil(字符数 / 4)` 估算。未计入不会发送给模型的纯运行时 UI 与 Slash 命令。
+相比当前上游扩展，初始开销减少了 **7,307 tokens（96.5%）**。测试环境为 Pi 0.84.4 与 `pi-context-view@0.4.3` 独立会话，排除了 Pi 内置工具、Skills、上下文文件与无关扩展。Context View 按 `ceil(字符数 / 4)` 估算。未计入不会发送给模型的纯运行时 UI 与 Slash 命令。
 
 ## 版本说明
 
-上游运行时锁定为 `@tintinweb/pi-subagents@0.16.1`。
+上游运行时锁定为 `@tintinweb/pi-subagents@0.19.0`。
 
 ## 本地开发
 

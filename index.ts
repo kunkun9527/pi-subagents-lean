@@ -27,12 +27,12 @@ function decorateWithCollapsedDisplay<T extends CollapsedDisplayTool>(tool: T): 
 
 type CapturedTool = ToolDefinition<any, any, any>;
 type UpstreamExtension = (pi: ExtensionAPI) => void;
-type FacadeOperation = "run" | "result" | "steer" | "help";
+type FacadeOperation = "run" | "result" | "steer" | "workflow" | "help";
 
 const FACADE_PARAMETERS = Type.Object({
   op: Type.Unsafe<FacadeOperation>({
     type: "string",
-    enum: ["run", "result", "steer", "help"],
+    enum: ["run", "result", "steer", "workflow", "help"],
   }),
   prompt: Type.Optional(Type.String({ description: "Task for run." })),
   description: Type.Optional(Type.String({ description: "3-5 word UI label for run." })),
@@ -72,6 +72,11 @@ function renderParams(params: Record<string, unknown>): Record<string, unknown> 
   }
 }
 
+function getToolName(op: unknown): string {
+  return op === "result" ? "get_subagent_result" : op === "steer" ? "steer_subagent" : op === "workflow" ? "SubagentWorkflow" : "Agent";
+}
+
+
 export function createSubagentsFacade(
   upstream: UpstreamExtension = subagents,
 ): (pi: ExtensionAPI) => void {
@@ -82,20 +87,16 @@ export function createSubagentsFacade(
     const facadeTool: ToolDefinition<typeof FACADE_PARAMETERS, any, any> = {
       name: "subagent",
       label: "Subagent",
-      description: "Launch, inspect, or steer a subagent. Use help for advanced parameters.",
+      description: "Run or inspect subagents/workflows through one tool; use help for advanced parameters.",
       parameters: FACADE_PARAMETERS,
       promptGuidelines: [
-        "run requires prompt, description (3-5 words), and subagent_type; use a matching agent for broad work, and direct tools when the target is known.",
+        "run requires prompt, description (3-5 words), and subagent_type; use workflow for scripted multi-agent orchestration.",
         "Put advanced options in input as a JSON object; direct fields override duplicate JSON keys. result uses agent_id; steer uses agent_id and message. Use help only when advanced parameters are unclear.",
         "Background completion is notified; never poll or sleep. Summarize results and verify claimed code changes.",
       ],
       renderCall(args, theme, context) {
         const routed = renderParams(args);
-        const toolName = args.op === "result"
-          ? "get_subagent_result"
-          : args.op === "steer"
-            ? "steer_subagent"
-            : "Agent";
+        const toolName = getToolName(args.op);
         const target = tools.get(toolName);
         if (target?.renderCall) {
           return target.renderCall(routed, theme, { ...context, args: routed });
@@ -105,11 +106,7 @@ export function createSubagentsFacade(
       renderResult(result, options, theme, context) {
         const facadeArgs = context.args;
         const routed = renderParams(facadeArgs);
-        const toolName = facadeArgs.op === "result"
-          ? "get_subagent_result"
-          : facadeArgs.op === "steer"
-            ? "steer_subagent"
-            : "Agent";
+        const toolName = getToolName(facadeArgs.op);
         const target = tools.get(toolName);
         if (target?.renderResult) {
           return target.renderResult(result, options, theme, { ...context, args: routed });
@@ -129,18 +126,16 @@ export function createSubagentsFacade(
               ? "get_subagent_result"
               : requested === "steer"
                 ? "steer_subagent"
-                : undefined;
+                : requested === "workflow"
+                  ? "SubagentWorkflow"
+                  : undefined;
           const helpTool = helpToolName ? tools.get(helpToolName) : undefined;
           const text = helpTool
             ? `${requested} -> ${helpToolName}\n\n${helpTool.description ?? ""}\n\nParameters:\n${JSON.stringify(helpTool.parameters, null, 2)}`
-            : "Subagent operations: run, result, steer. Use op=help with input set to one operation for its complete parameters.";
+            : "Subagent operations: run, result, steer, workflow. Use op=help with input set to one operation for its complete parameters.";
           return { content: [{ type: "text", text }], details: {} };
         }
-        const toolName = params.op === "result"
-          ? "get_subagent_result"
-          : params.op === "steer"
-            ? "steer_subagent"
-            : "Agent";
+        const toolName = getToolName(params.op);
         const target = tools.get(toolName);
         if (!target) {
           return {
