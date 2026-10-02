@@ -90,9 +90,9 @@ export function createSubagentsFacade(
       description: "Run or inspect subagents/workflows through one tool; use help for advanced parameters.",
       parameters: FACADE_PARAMETERS,
       promptGuidelines: [
-        "run requires prompt, description (3-5 words), and subagent_type; use workflow for scripted multi-agent orchestration.",
-        "Put advanced options in input as a JSON object; direct fields override duplicate JSON keys. result uses agent_id; steer uses agent_id and message. Use help only when advanced parameters are unclear.",
-        "Background completion is notified; never poll or sleep. Summarize results and verify claimed code changes.",
+        "subagent: run requires prompt, description (3-5 words), and subagent_type; use workflow for scripted multi-agent orchestration.",
+        "subagent: Put advanced options in input as a JSON object; direct fields override duplicate JSON keys. result uses agent_id; steer uses agent_id and message. Use help only when advanced parameters are unclear.",
+        "subagent: Background completion is notified; never poll or sleep. Summarize results and verify claimed code changes.",
       ],
       renderCall(args, theme, context) {
         const routed = renderParams(args);
