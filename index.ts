@@ -37,7 +37,7 @@ const FACADE_PARAMETERS = Type.Object({
   prompt: Type.Optional(Type.String({ description: "Task for run." })),
   description: Type.Optional(Type.String({ description: "3-5 word UI label for run." })),
   subagent_type: Type.Optional(
-    Type.String({ description: "general-purpose, Explore, Plan, or a custom agent type." }),
+    Type.String({ description: 'Agent type; op=help with input "run" lists available types.' }),
   ),
   run_in_background: Type.Optional(Type.Boolean()),
   agent_id: Type.Optional(Type.String()),
@@ -84,11 +84,24 @@ export function createSubagentsFacade(
     const tools = new Map<string, CapturedTool>();
     upstream(capturePi(pi, tools));
 
+    const raw = tools.get("Agent")?.parameters?.properties?.subagent_type?.description;
+    const match = typeof raw === "string" ? raw.match(
+      /^The type of specialized agent to use\. Available types: ([\s\S]*)\. Custom agents from [\s\S]* are also available\.$/
+    ) : null;
+    const parameters = Type.Object({
+      ...FACADE_PARAMETERS.properties,
+      subagent_type: Type.Optional(Type.String({
+        description: match
+          ? `Agent types at startup: ${match[1] || "(none)"}.`
+          : FACADE_PARAMETERS.properties.subagent_type.description,
+      })),
+    });
+
     const facadeTool: ToolDefinition<typeof FACADE_PARAMETERS, any, any> = {
       name: "subagent",
       label: "Subagent",
       description: "Run or inspect subagents/workflows through one tool; use help for advanced parameters.",
-      parameters: FACADE_PARAMETERS,
+      parameters,
       promptGuidelines: [
         "subagent: run requires prompt, description (3-5 words), and subagent_type; use workflow for scripted multi-agent orchestration.",
         "subagent: Put advanced options in input as a JSON object; direct fields override duplicate JSON keys. result uses agent_id; steer uses agent_id and message. Use help only when advanced parameters are unclear.",

@@ -14,6 +14,7 @@
 * 完整保留上游能力：包括 Agent 发现、后台派生运行、结果获取、动态引导（Steering）以及完整的生命周期管理。
 * 统一工具入口：将原版的 `Agent`、`get_subagent_result` 与 `steer_subagent` 整合为单个 `subagent` 工具。
 * 按需加载高级参数：复杂参数和完整 Schema 仅在调用 `help` 或传入 JSON 时展开，不再默认常驻于 Prompt 中。
+* 可用 Agent 名单：`subagent_type` 显示扩展启动时捕获的已启用类型。修改 Agent 定义或设置后需重新加载扩展；上游描述格式无法识别时，通过 `help` 搭配 `input: "run"` 查询。
 
 本扩展并未简化或重写核心逻辑，而是仅对提供给模型的 Prompt 工具描述进行了深度精简。
 

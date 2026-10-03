@@ -14,6 +14,7 @@ A lightweight Pi wrapper for [`@tintinweb/pi-subagents`](https://github.com/tint
 * Full upstream runtime: Keeps agent discovery, spawning, background execution, result retrieval, steering, and lifecycle handling untouched.
 * Unified tool interface: Combines `Agent`, `get_subagent_result`, and `steer_subagent` under one `subagent` tool.
 * Advanced options on demand: Detailed parameters and schemas remain accessible via `help` and JSON inputs without cluttering the default prompt.
+* Available agent names: `subagent_type` shows the enabled types captured at extension startup. Reload the extension after changing agent definitions/settings; if the upstream description format is unrecognized, use `help` with `input: "run"`.
 
 This package does not strip down or rewrite the underlying engine; it only slims down the prompt footprint exposed to the model.
 

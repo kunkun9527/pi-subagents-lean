@@ -3,6 +3,9 @@ import test from "node:test";
 import { createJiti } from "jiti";
 import { fileURLToPath } from "node:url";
 import { Type } from "@sinclair/typebox";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 const jiti = createJiti(import.meta.url, { moduleCache: false });
 const extensionModule = await jiti.import(fileURLToPath(new URL("../index.ts", import.meta.url)));
@@ -88,6 +91,74 @@ test("registers one subagent facade over the upstream tools", () => {
   assert.deepEqual(pi.tools.map((tool) => tool.name), ["subagent"]);
   assert.deepEqual(pi.tools[0].parameters.required, ["op"]);
   assert.deepEqual(pi.tools[0].parameters.properties.op.enum, ["run", "result", "steer", "workflow", "help"]);
+});
+
+test("uses enabled names from real pinned upstream initialization", () => {
+  const root = mkdtempSync(join(tmpdir(), "subagents-lean-types-"));
+  const cwd = process.cwd();
+  const previousDir = process.env.PI_CODING_AGENT_DIR;
+  const globalDir = join(root, "global");
+  const projectDir = join(root, "project");
+  mkdirSync(join(globalDir, "agents"), { recursive: true });
+  writeFileSync(join(globalDir, "agent-tool-description.md"), "Custom tool help.");
+  mkdirSync(join(projectDir, ".pi", "agents"), { recursive: true });
+  const enabled = ["General", "Oracle", "Researcher", "Reviewer, Senior"];
+  for (const [index, name] of [...enabled, "Writer"].entries()) {
+    writeFileSync(join(globalDir, "agents", `${index}.md`),
+      `---\nname: "${name}"\nenabled: ${name !== "Writer"}\n---\nTest agent.\n`);
+  }
+  try {
+    process.env.PI_CODING_AGENT_DIR = globalDir;
+    process.chdir(projectDir);
+    for (const toolDescriptionMode of ["full", "compact", "custom"]) {
+      writeFileSync(join(globalDir, "subagents.json"), JSON.stringify({
+        disableDefaultAgents: true, toolDescriptionMode,
+      }));
+      const pi = makePi();
+      createSubagentsFacade()(pi);
+      assert.deepEqual(pi.tools.map((tool) => tool.name), ["subagent"]);
+      assert.equal(pi.tools[0].parameters.properties.subagent_type.description,
+        `Agent types at startup: ${enabled.join(", ")}.`);
+      assert.deepEqual(pi.tools[0].parameters.required, ["op"]);
+    }
+    for (const [index, name] of enabled.entries()) {
+      writeFileSync(join(projectDir, ".pi", "agents", `${index}.md`),
+        `---\nname: "${name}"\nenabled: false\n---\nDisabled override.\n`);
+    }
+    const emptyPi = makePi();
+    createSubagentsFacade()(emptyPi);
+    assert.equal(emptyPi.tools[0].parameters.properties.subagent_type.description,
+      "Agent types at startup: (none).");
+  } finally {
+    process.chdir(cwd);
+    if (previousDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
+    else process.env.PI_CODING_AGENT_DIR = previousDir;
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("falls back on missing or changed upstream format without sharing schemas", () => {
+  const fallback = 'Agent type; op=help with input "run" lists available types.';
+  const schemas = [];
+  for (const description of [
+    "The type of specialized agent to use. Available types: General. Custom agents from test are also available.",
+    undefined,
+    "Updated upstream format: Oracle",
+  ]) {
+    const pi = makePi();
+    createSubagentsFacade((capture) => makeFakeUpstream()({
+      registerTool(tool) {
+        if (tool.name === "Agent") tool.parameters.properties.subagent_type.description = description;
+        capture.registerTool(tool);
+      },
+    }))(pi);
+    schemas.push(pi.tools[0].parameters);
+  }
+  assert.equal(schemas[0].properties.subagent_type.description, "Agent types at startup: General.");
+  assert.equal(schemas[1].properties.subagent_type.description, fallback);
+  assert.equal(schemas[2].properties.subagent_type.description, fallback);
+  assert.notEqual(schemas[0], schemas[1]);
+  assert.notEqual(schemas[0].properties.subagent_type, schemas[1].properties.subagent_type);
 });
 
 test("run forwards common fields and the complete execution context to Agent", async () => {
