@@ -70,7 +70,7 @@ With only this extension enabled, its recurring model-facing initialization cont
 
 | Variant | Tool and prompt contribution | Total |
 | --- | --- | ---: |
-| Lean `@ssk_dev/pi-subagents-lean@0.19.3` | `subagent` (275) | **275** |
+| Lean `@ssk_dev/pi-subagents-lean@0.19.4` | `subagent` (275) | **275** |
 | Upstream `@tintinweb/pi-subagents@0.19.0` | `Agent` (2,563) + `SubagentWorkflow` (5,611) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,540** |
 
 This saves **8,265 tokens (96.8%)**.

@@ -1,6 +1,6 @@
 {
   "name": "@ssk_dev/pi-subagents-lean",
-  "version": "0.19.3",
+  "version": "0.19.4",
   "type": "module",
   "description": "Lean Pi subagents extension with full features: 268 initial tokens (96.5% fewer than current upstream).",
   "license": "MIT",
