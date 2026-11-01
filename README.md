@@ -1,7 +1,7 @@
 # @ssk_dev/pi-subagents-lean
 
 <!-- token-benchmark:summary:start -->
-> **Token benchmark: Lean 276, upstream `@tintinweb/pi-subagents@0.22.0` 8,540 — 96.8% fewer.**
+> **Token benchmark: Lean 276, upstream `@tintinweb/pi-subagents@0.22.1` 8,552 — 96.8% fewer.**
 <!-- token-benchmark:summary:end -->
 > [See my full setup for Pi](https://github.com/kunkun9527/my-lean-pi-setup)
 
@@ -16,10 +16,10 @@ With only this extension enabled, its recurring model-facing initialization cont
 
 | Variant | Tool and prompt contribution | Total |
 | --- | --- | ---: |
-| Lean `@ssk_dev/pi-subagents-lean@0.22.4` | `subagent` (276) | **276** |
-| Upstream `@tintinweb/pi-subagents@0.22.0` | `Agent` (2,563) + `SubagentWorkflow` (5,611) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,540** |
+| Lean `@ssk_dev/pi-subagents-lean@0.22.5` | `subagent` (276) | **276** |
+| Upstream `@tintinweb/pi-subagents@0.22.1` | `Agent` (2,575) + `SubagentWorkflow` (5,611) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,552** |
 
-This saves **8,264 tokens (96.8%)**.
+This saves **8,276 tokens (96.8%)**.
 Measured with Pi 1.4.0 in separate temporary processes with empty working directories and configuration. Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; `before_agent_start` additions are included. Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing.
 <!-- token-benchmark:benchmark:end -->
 

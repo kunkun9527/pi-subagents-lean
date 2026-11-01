@@ -1,7 +1,7 @@
 # @ssk_dev/pi-subagents-lean
 
 <!-- token-benchmark:summary:start -->
-> **Token 基准：Lean 276，上游 `@tintinweb/pi-subagents@0.22.0` 8,540，减少 96.8%。**
+> **Token 基准：Lean 276，上游 `@tintinweb/pi-subagents@0.22.1` 8,552，减少 96.8%。**
 <!-- token-benchmark:summary:end -->
 > **完整配置参考：** [查看 Pi Lean Setup](https://github.com/kunkun9527/my-lean-pi-setup)
 
@@ -16,10 +16,10 @@
 
 | 版本 | 工具与 Prompt 构成 | 合计 |
 | --- | --- | ---: |
-| Lean `@ssk_dev/pi-subagents-lean@0.22.4` | `subagent` (276) | **276** |
-| 上游 `@tintinweb/pi-subagents@0.22.0` | `Agent` (2,563) + `SubagentWorkflow` (5,611) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,540** |
+| Lean `@ssk_dev/pi-subagents-lean@0.22.5` | `subagent` (276) | **276** |
+| 上游 `@tintinweb/pi-subagents@0.22.1` | `Agent` (2,575) + `SubagentWorkflow` (5,611) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,552** |
 
-节省 **8,264 tokens（96.8%）**。
+节省 **8,276 tokens（96.8%）**。
 测量环境为 Pi 1.4.0 的独立临时进程、空白工作目录与空白配置。排除内置工具、Skills、上下文文件、会话历史、用户消息、无关扩展、运行时 UI 与 Slash Commands；计入扩展的 `before_agent_start` 注入。Token 是按 `ceil(字符数 / 4)` 计算的固定字符代理估算，并非模型 tokenizer 实际计费值。
 <!-- token-benchmark:benchmark:end -->
 
