@@ -81,7 +81,7 @@ The upstream package includes built-in `general-purpose`, `Explore`, and `Plan` 
 
 ## Versions
 
-Upstream runtime is pinned to `@tintinweb/pi-subagents@0.22.0`, which requires Pi 1.1.0 or newer.
+Upstream runtime is pinned to `@tintinweb/pi-subagents@0.22.1`, which requires Pi 1.1.0 or newer.
 
 ## Development
 

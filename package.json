@@ -1,6 +1,6 @@
 {
   "name": "@ssk_dev/pi-subagents-lean",
-  "version": "0.22.4",
+  "version": "0.22.5",
   "type": "module",
   "description": "Lean Pi subagents extension with full features: 268 initial tokens (96.5% fewer than current upstream).",
   "license": "MIT",
@@ -37,7 +37,7 @@
     "check": "npm run typecheck && npm test"
   },
   "dependencies": {
-    "@tintinweb/pi-subagents": "0.22.0"
+    "@tintinweb/pi-subagents": "0.22.1"
   },
   "peerDependencies": {
     "@earendil-works/pi-ai": ">=1.1.0",
