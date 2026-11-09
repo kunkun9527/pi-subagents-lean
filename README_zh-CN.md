@@ -81,7 +81,7 @@ subagent
 
 ## 版本说明
 
-上游运行时锁定为 `@tintinweb/pi-subagents@0.22.1`，需要 Pi 1.1.0 或更新版本。
+上游运行时锁定为 `@tintinweb/pi-subagents@0.23.1`，需要 Pi 1.1.0 或更新版本。
 
 ## 本地开发
 
