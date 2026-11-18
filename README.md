@@ -9,7 +9,7 @@
 </div>
 
 <!-- token-benchmark:summary:start -->
-> **Always-on context: 276 tokens vs. 8,542 for upstream `@tintinweb/pi-subagents@0.23.1`, 96.8% less.**
+<p align="center"><img src="assets/chart.svg" alt="Always-on context: 8,542 tokens upstream, 276 Lean, 96.8% less" width="800"></p>
 <!-- token-benchmark:summary:end -->
 
 A lean version of [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents). It runs the upstream `0.23.1` engine as-is and folds its agent tools into one `subagent` tool with a short schema.
@@ -76,8 +76,6 @@ With only this extension enabled, what the model reads on every turn:
 | --- | --- | ---: |
 | Lean `@ssk_dev/pi-subagents-lean@0.23.1` | `subagent` (276) | **276** |
 | Upstream `@tintinweb/pi-subagents@0.23.1` | `Agent` (2,570) + `SubagentWorkflow` (5,606) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,542** |
-
-That is **8,266 tokens (96.8%)** less.
 
 <sub>Method: Pi 1.4.0, each variant measured in its own temporary process with an empty working directory and configuration. Built-in tools, skills, context files, session history, user messages, other extensions, runtime UI and slash commands are not counted; `before_agent_start` additions are. Tokens are estimated as `ceil(characters / 4)`, not billed tokens.</sub>
 <!-- token-benchmark:benchmark:end -->
