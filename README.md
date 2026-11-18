@@ -1,54 +1,48 @@
-# @ssk_dev/pi-subagents-lean
+<div align="center">
+
+# pi-subagents-lean
+
+**Full Pi subagents, one compact tool.**
+
+[简体中文](https://github.com/kunkun9527/pi-subagents-lean/blob/main/README_zh-CN.md) · Full setup: [My Lean Pi Setup](https://github.com/kunkun9527/my-lean-pi-setup)
+
+</div>
 
 <!-- token-benchmark:summary:start -->
-> **Token benchmark: Lean 276, upstream `@tintinweb/pi-subagents@0.23.1` 8,542 — 96.8% fewer.**
+> **Always-on context: 276 tokens vs. 8,542 for upstream `@tintinweb/pi-subagents@0.23.1`, 96.8% less.**
 <!-- token-benchmark:summary:end -->
-> [See my full setup for Pi](https://github.com/kunkun9527/my-lean-pi-setup)
 
-[简体中文](https://github.com/kunkun9527/pi-subagents-lean/blob/main/README_zh-CN.md)
+A lean version of [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents). It runs the upstream `0.23.1` engine as-is and folds its agent tools into one `subagent` tool with a short schema.
 
-A lightweight Pi wrapper for [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents). It preserves the full upstream subagent engine while condensing all agent operations into a single, compact tool schema.
-
-## Context Footprint Benchmark
-
-<!-- token-benchmark:benchmark:start -->
-With only this extension enabled, its recurring model-facing initialization contribution is:
-
-| Variant | Tool and prompt contribution | Total |
-| --- | --- | ---: |
-| Lean `@ssk_dev/pi-subagents-lean@0.23.1` | `subagent` (276) | **276** |
-| Upstream `@tintinweb/pi-subagents@0.23.1` | `Agent` (2,570) + `SubagentWorkflow` (5,606) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,542** |
-
-This saves **8,266 tokens (96.8%)**.
-Measured with Pi 1.4.0 in separate temporary processes with empty working directories and configuration. Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; `before_agent_start` additions are included. Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing.
-<!-- token-benchmark:benchmark:end -->
-
-## Core Features
-
-* Full upstream runtime: Keeps agent discovery, spawning, background execution, result retrieval, steering, and lifecycle handling untouched.
-* Unified tool interface: Combines `Agent`, `get_subagent_result`, and `steer_subagent` under one `subagent` tool.
-* Advanced options on demand: Detailed parameters and schemas remain accessible via `help` and JSON inputs without cluttering the default prompt.
-* Available agent names: `subagent_type` shows the enabled types captured at extension startup. Reload the extension after changing agent definitions/settings; if the upstream description format is unrecognized, use `help` with `input: "run"`.
-
-This package does not strip down or rewrite the underlying engine; it only slims down the prompt footprint exposed to the model.
-
-## Installation
+## Install
 
 ```bash
 pi install npm:@ssk_dev/pi-subagents-lean
 ```
 
-Do not load this alongside another `pi-subagents` wrapper to avoid registering duplicate tools.
+Requires Pi `>=1.1.0` and Node.js `>=22.19.0`. Don't install it alongside upstream or another `pi-subagents` wrapper, or the tools get registered twice.
+
+## Compared with upstream
+
+**Kept**:
+
+- Agent discovery, spawning, background runs, result retrieval, steering and lifecycle handling.
+- Upstream's built-in `general-purpose`, `Explore` and `Plan` types, plus any custom agents it discovers.
+- The engine itself, untouched: only the model-facing prompt is condensed.
+
+**Trimmed**:
+
+- `Agent`, `get_subagent_result` and `steer_subagent` become one `subagent` tool.
+- Advanced parameters and full schemas stay out of the prompt until the model asks with `help`.
+
+**Added**:
+
+- **Forgiving arguments**: a missing `op` is inferred only when unambiguous: `prompt` or `subagent_type` means `run`; `agent_id` means `result`, or `steer` when `message` is also present. Calls mixing both are left to validation. An object `input` is serialized to a JSON string.
+- **Agent names in the schema**: `subagent_type` lists the enabled types captured at startup. Reload the extension after changing agent definitions or settings; if upstream's description format isn't recognized, use `help` with `input: "run"`.
 
 ## Usage
 
-The model interacts with a single tool:
-
-```text
-subagent
-```
-
-Supported operations include `run`, `result`, `steer`, `workflow`, and `help`.
+The model sees one tool, `subagent`, with the operations `run`, `result`, `steer`, `workflow` and `help`.
 
 ```json
 {
@@ -60,28 +54,33 @@ Supported operations include `run`, `result`, `steer`, `workflow`, and `help`.
 }
 ```
 
-* Use `result` with `agent_id` to retrieve output from a finished task.
-* Use `steer` with `agent_id` and `message` to redirect a running agent.
-* Use `help` to inspect advanced upstream parameters when needed.
-* If a call omits `op`, it is inferred only when unambiguous: `prompt` or `subagent_type` means `run`; `agent_id` means `result`, or `steer` when `message` is also present. Calls mixing both signals are left for validation.
-* If `input` is passed as an object instead of a JSON string, it is serialized automatically.
+- `result` with `agent_id` returns a finished task's output.
+- `steer` with `agent_id` and `message` redirects a running agent.
+- `help` shows upstream's advanced parameters.
 
-## Important: Review Your Agent Definitions
+## Check your agent definitions
 
-The upstream runtime automatically discovers built-in and custom agents across global, workspace, and project directories. This repository does not package your private agents, sessions, or memory, but it intentionally preserves that discovery mechanism.
+Upstream discovers built-in and custom agents in global, workspace and project directories. This package ships none of my private agents, sessions or memory, but it keeps that discovery. After installing:
 
-After installation:
+1. Make sure each discovered agent's `model` points to a model you have.
+2. Remove agent types you don't need.
+3. Adjust prompts, tools and extension allowlists to your workflow.
+4. Watch for name collisions: a custom agent can override a built-in type of the same name, depending on discovery order.
 
-1. Review all discovered agent definitions and make sure each `model` field points to a model available in your environment.
-2. Remove any agent types you do not need.
-3. Adjust prompts, tools, and extension allowlists to match your workflow.
-4. Check for naming collisions: a custom agent with the same name can override a built-in type depending on discovery precedence.
+## Token comparison
 
-The upstream package includes built-in `general-purpose`, `Explore`, and `Plan` types. Your environment may load additional custom definitions.
+<!-- token-benchmark:benchmark:start -->
+With only this extension enabled, what the model reads on every turn:
 
-## Versions
+| Variant | Breakdown | Total |
+| --- | --- | ---: |
+| Lean `@ssk_dev/pi-subagents-lean@0.23.1` | `subagent` (276) | **276** |
+| Upstream `@tintinweb/pi-subagents@0.23.1` | `Agent` (2,570) + `SubagentWorkflow` (5,606) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,542** |
 
-Upstream runtime is pinned to `@tintinweb/pi-subagents@0.23.1`, which requires Pi 1.1.0 or newer.
+That is **8,266 tokens (96.8%)** less.
+
+<sub>Method: Pi 1.4.0, each variant measured in its own temporary process with an empty working directory and configuration. Built-in tools, skills, context files, session history, user messages, other extensions, runtime UI and slash commands are not counted; `before_agent_start` additions are. Tokens are estimated as `ceil(characters / 4)`, not billed tokens.</sub>
+<!-- token-benchmark:benchmark:end -->
 
 ## Development
 
@@ -92,4 +91,4 @@ npm run check
 
 ## License
 
-MIT. This project wraps the MIT-licensed [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents).
+MIT. The runtime comes from [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents) (MIT).

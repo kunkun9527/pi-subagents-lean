@@ -1,36 +1,18 @@
-# @ssk_dev/pi-subagents-lean
+<div align="center">
+
+# pi-subagents-lean
+
+**完整的 Pi 子代理，只占一个工具。**
+
+[English](README.md) · 完整配置：[My Lean Pi Setup](https://github.com/kunkun9527/my-lean-pi-setup)
+
+</div>
 
 <!-- token-benchmark:summary:start -->
-> **Token 基准：Lean 276，上游 `@tintinweb/pi-subagents@0.23.1` 8,542，减少 96.8%。**
+> **常驻上下文：Lean 276 tokens，上游 `@tintinweb/pi-subagents@0.23.1` 8,542 tokens，少 96.8%。**
 <!-- token-benchmark:summary:end -->
-> **完整配置参考：** [查看 Pi Lean Setup](https://github.com/kunkun9527/my-lean-pi-setup)
 
-[English](README.md)
-
-基于 [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents) 的精简封装。在完整保留上游 Subagent 功能与运行时的同时，将所有操作收束为一个紧凑的工具接口，显著降低上下文占用。
-
-## 初始化上下文占用对比
-
-<!-- token-benchmark:benchmark:start -->
-单独启用本扩展时，模型可见的常驻初始化上下文如下：
-
-| 版本 | 工具与 Prompt 构成 | 合计 |
-| --- | --- | ---: |
-| Lean `@ssk_dev/pi-subagents-lean@0.23.1` | `subagent` (276) | **276** |
-| 上游 `@tintinweb/pi-subagents@0.23.1` | `Agent` (2,570) + `SubagentWorkflow` (5,606) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,542** |
-
-节省 **8,266 tokens（96.8%）**。
-测量环境为 Pi 1.4.0 的独立临时进程、空白工作目录与空白配置。排除内置工具、Skills、上下文文件、会话历史、用户消息、无关扩展、运行时 UI 与 Slash Commands；计入扩展的 `before_agent_start` 注入。Token 是按 `ceil(字符数 / 4)` 计算的固定字符代理估算，并非模型 tokenizer 实际计费值。
-<!-- token-benchmark:benchmark:end -->
-
-## 核心特性
-
-* 完整保留上游能力：包括 Agent 发现、后台派生运行、结果获取、动态引导（Steering）以及完整的生命周期管理。
-* 统一工具入口：将原版的 `Agent`、`get_subagent_result` 与 `steer_subagent` 整合为单个 `subagent` 工具。
-* 按需加载高级参数：复杂参数和完整 Schema 仅在调用 `help` 或传入 JSON 时展开，不再默认常驻于 Prompt 中。
-* 可用 Agent 名单：`subagent_type` 显示扩展启动时捕获的已启用类型。修改 Agent 定义或设置后需重新加载扩展；上游描述格式无法识别时，通过 `help` 搭配 `input: "run"` 查询。
-
-本扩展并未简化或重写核心逻辑，而是仅对提供给模型的 Prompt 工具描述进行了深度精简。
+[`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents) 的精简版。运行时直接用上游 `0.23.1`，我只把它的几个工具合成一个 `subagent`，说明也写得更短。
 
 ## 安装
 
@@ -38,17 +20,29 @@
 pi install npm:@ssk_dev/pi-subagents-lean
 ```
 
-请勿与其它 `pi-subagents` 包装扩展同时加载，以防重复注册工具。
+需要 Pi `>=1.1.0`、Node.js `>=22.19.0`。不要和上游或其他 `pi-subagents` 包装同时安装，否则工具会注册两次。
 
-## 使用方法
+## 和上游比
 
-模型仅会看到一个工具：
+**保留**：
 
-```text
-subagent
-```
+- Agent 发现、派生、后台运行、取结果、中途引导（steer）和生命周期管理。
+- 上游自带的 `general-purpose`、`Explore`、`Plan` 三种类型，以及它发现的自定义 Agent。
+- 运行时原样不动，只精简模型看得到的提示。
 
-支持的操作包括 `run`、`result`、`steer`、`workflow` 和 `help`。
+**精简**：
+
+- `Agent`、`get_subagent_result`、`steer_subagent` 合成一个 `subagent` 工具。
+- 高级参数和完整 schema 不常驻，模型用 `help` 查询时才展开。
+
+**新增**：
+
+- **参数容错**：漏传 `op` 时，只在没有歧义时推断：带 `prompt` 或 `subagent_type` 视为 `run`；带 `agent_id` 视为 `result`，再带 `message` 视为 `steer`。两类字段混用时不推断，照常报错。`input` 传成对象时自动转成 JSON 字符串。
+- **schema 里列出 Agent 名**：`subagent_type` 列出扩展启动时已启用的类型。改了 Agent 定义或设置后要重新加载扩展；上游描述格式认不出来时，用 `help` 加 `input: "run"` 查询。
+
+## 用法
+
+模型只看到一个 `subagent` 工具，操作有 `run`、`result`、`steer`、`workflow`、`help`。
 
 ```json
 {
@@ -60,36 +54,41 @@ subagent
 }
 ```
 
-* 使用 `result` 搭配 `agent_id` 查看已完成任务的输出结果。
-* 使用 `steer` 搭配 `agent_id` 与 `message` 调整正在运行中的 Agent。
-* 使用 `help` 按需查看上游高级参数配置。
-* 调用漏传 `op` 时，仅在无歧义时自动推断：带 `prompt` 或 `subagent_type` 视为 `run`；带 `agent_id` 视为 `result`，同时带 `message` 则视为 `steer`。两类字段混用时不推断，照常校验报错。
-* `input` 误传为对象而非 JSON 字符串时，会自动序列化。
+- `result` 加 `agent_id`：取已完成任务的输出。
+- `steer` 加 `agent_id` 和 `message`：调整正在运行的 Agent。
+- `help`：查看上游的高级参数。
 
-## 重要提醒：检查 Agent 定义配置
+## 检查你的 Agent 定义
 
-上游运行时会自动扫描全局、工作区及项目目录中的内置与自定义 Agent。本仓库不包含任何私有 Agent、会话或记忆配置，但完整继承了这一发现机制。
+上游会在全局、工作区和项目目录里自动发现内置和自定义 Agent。本包不带我的私有 Agent、会话或记忆，但保留了这套发现机制。装好后：
 
-安装完成后建议：
+1. 确认每个 Agent 的 `model` 指向你能用的模型。
+2. 删掉用不到的 Agent 类型。
+3. 按自己的工作流调整 Prompt、工具和扩展白名单。
+4. 注意重名：自定义 Agent 可能按发现顺序覆盖同名的内置类型。
 
-1. 检查扫描到的所有 Agent 定义，确保其 `model` 字段指向你当前环境中可用的模型。
-2. 移除不需要的 Agent 类型。
-3. 根据个人工作流调整 Prompt、工具绑定及扩展白名单。
-4. 注意命名冲突：同名的自定义 Agent 可能会根据优先级覆盖内置类型。
+## Token 对比
 
-原版自带 `general-purpose`、`Explore` 和 `Plan` 三种预设，你的环境可能会额外加载其他自定义类型。
+<!-- token-benchmark:benchmark:start -->
+只启用这一个扩展时，模型每轮都会读到的内容：
 
-## 版本说明
+| 版本 | 构成 | 合计 |
+| --- | --- | ---: |
+| Lean `@ssk_dev/pi-subagents-lean@0.23.1` | `subagent` (276) | **276** |
+| 上游 `@tintinweb/pi-subagents@0.23.1` | `Agent` (2,570) + `SubagentWorkflow` (5,606) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,542** |
 
-上游运行时锁定为 `@tintinweb/pi-subagents@0.23.1`，需要 Pi 1.1.0 或更新版本。
+少 **8,266 tokens（96.8%）**。
 
-## 本地开发
+<sub>测量方式：Pi 1.4.0，每个版本在独立的临时进程里测，工作目录和配置都是空的。不计内置工具、Skills、上下文文件、会话历史、用户消息、其他扩展、运行时 UI 和 Slash Commands；计入 `before_agent_start` 注入的内容。Token 按 `ceil(字符数 / 4)` 估算，不是实际计费值。</sub>
+<!-- token-benchmark:benchmark:end -->
+
+## 开发
 
 ```bash
 npm ci
 npm run check
 ```
 
-## 开源协议与致谢
+## 协议与致谢
 
-MIT 协议。本项目封装自采用 MIT 协议的 [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents)。
+MIT。运行时来自 [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents)（MIT）。
