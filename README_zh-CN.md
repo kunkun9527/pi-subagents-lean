@@ -9,10 +9,10 @@
 </div>
 
 <!-- token-benchmark:summary:start -->
-<p align="center"><img src="assets/chart.zh-CN.svg" alt="常驻上下文：上游 8,542 tokens，精简版 276，少 96.8%" width="800"></p>
+<p align="center"><img src="assets/chart.zh-CN.svg" alt="常驻上下文：上游 8,956 tokens，精简版 276，少 96.9%" width="800"></p>
 <!-- token-benchmark:summary:end -->
 
-[`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents) 的精简版。运行时直接用上游 `0.23.1`，我只把它的几个工具合成一个 `subagent`，说明也写得更短。
+[`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents) 的精简版。运行时直接用上游 `0.26.2`，我只把它的几个工具合成一个 `subagent`，说明也写得更短。
 
 ## 安装
 
@@ -74,8 +74,8 @@ pi install npm:@ssk_dev/pi-subagents-lean
 
 | 版本 | 构成 | 合计 |
 | --- | --- | ---: |
-| Lean `@ssk_dev/pi-subagents-lean@0.23.1` | `subagent` (276) | **276** |
-| 上游 `@tintinweb/pi-subagents@0.23.1` | `Agent` (2,570) + `SubagentWorkflow` (5,606) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,542** |
+| Lean `@ssk_dev/pi-subagents-lean@0.26.2` | `subagent` (276) | **276** |
+| 上游 `@tintinweb/pi-subagents@0.26.2` | `Agent` (2,570) + `SubagentWorkflow` (6,020) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,956** |
 
 <sub>测量方式：Pi 1.4.0，每个版本在独立的临时进程里测，工作目录和配置都是空的。不计内置工具、Skills、上下文文件、会话历史、用户消息、其他扩展、运行时 UI 和 Slash Commands；计入 `before_agent_start` 注入的内容。Token 按 `ceil(字符数 / 4)` 估算，不是实际计费值。</sub>
 <!-- token-benchmark:benchmark:end -->
