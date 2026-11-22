@@ -9,7 +9,7 @@
 </div>
 
 <!-- token-benchmark:summary:start -->
-<p align="center"><img src="assets/chart.zh-CN.svg" alt="常驻上下文：上游 8,956 tokens，精简版 276，少 96.9%" width="800"></p>
+<p align="center"><img src="assets/chart.zh-CN.svg" alt="常驻上下文：上游 8,956 tokens，精简版 275，少 96.9%" width="800"></p>
 <!-- token-benchmark:summary:end -->
 
 [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents) 的精简版。运行时直接用上游 `0.26.2`，我只把它的几个工具合成一个 `subagent`，说明也写得更短。
@@ -54,7 +54,8 @@ pi install npm:@ssk_dev/pi-subagents-lean
 }
 ```
 
-- `result` 加 `agent_id`：取已完成任务的输出。
+- 如果下一步依赖新派发 Agent 的结果，可用 `run_in_background: false` 在调用内等待，前提是该 Agent 的配置没有强制后台运行。后台任务等完成通知即可，不要轮询。
+- `result` 加 `agent_id`：非阻塞查询状态，或获取已完成的输出。若必须等已经派发的 Agent 完成，再传 `input: '{"wait":true}'`。
 - `steer` 加 `agent_id` 和 `message`：调整正在运行的 Agent。
 - `help`：查看上游的高级参数。
 
@@ -74,7 +75,7 @@ pi install npm:@ssk_dev/pi-subagents-lean
 
 | 版本 | 构成 | 合计 |
 | --- | --- | ---: |
-| Lean `@ssk_dev/pi-subagents-lean@0.26.2` | `subagent` (276) | **276** |
+| Lean `@ssk_dev/pi-subagents-lean@0.26.3` | `subagent` (275) | **275** |
 | 上游 `@tintinweb/pi-subagents@0.26.2` | `Agent` (2,570) + `SubagentWorkflow` (6,020) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,956** |
 
 <sub>测量方式：Pi 1.4.0，每个版本在独立的临时进程里测，工作目录和配置都是空的。不计内置工具、Skills、上下文文件、会话历史、用户消息、其他扩展、运行时 UI 和 Slash Commands；计入 `before_agent_start` 注入的内容。Token 按 `ceil(字符数 / 4)` 估算，不是实际计费值。</sub>

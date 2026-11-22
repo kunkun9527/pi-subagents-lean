@@ -6,13 +6,13 @@
   </style>
   <text x="24" y="34" class="mu" font-size="14">常驻上下文，对比上游 @tintinweb/pi-subagents@0.26.2</text>
   <text x="24" y="86" class="ac" font-size="48" font-weight="700">−96.9%</text>
-  <text x="222" y="70" class="fg num" font-size="18" font-weight="600">8,956 → 276 tokens</text>
-  <text x="222" y="92" class="mu" font-size="14">每次请求少 8,680 tokens，功能不变</text>
+  <text x="222" y="70" class="fg num" font-size="18" font-weight="600">8,956 → 275 tokens</text>
+  <text x="222" y="92" class="mu" font-size="14">每次请求少 8,681 tokens，功能不变</text>
   <g font-size="13">
     <text x="24" y="138" class="mu">锁定上游</text>
     <rect x="142" y="124" width="548" height="18" class="up"/><text x="698" y="138" class="mu num">8,956</text>
     <text x="24" y="172" class="fg" font-weight="600">精简版</text>
-    <rect x="142" y="158" width="16.9" height="18" class="ac"/><text x="166.9" y="172" class="fg num" font-weight="600">276</text>
+    <rect x="142" y="158" width="16.8" height="18" class="ac"/><text x="166.8" y="172" class="fg num" font-weight="600">275</text>
   </g>
   <text x="24" y="208" class="mu" font-size="11">Token 按 ceil(字符数 / 4) 估算。</text>
 </svg>

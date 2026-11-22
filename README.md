@@ -9,7 +9,7 @@
 </div>
 
 <!-- token-benchmark:summary:start -->
-<p align="center"><img src="assets/chart.svg" alt="Always-on context: 8,956 tokens upstream, 276 Lean, 96.9% less" width="800"></p>
+<p align="center"><img src="assets/chart.svg" alt="Always-on context: 8,956 tokens upstream, 275 Lean, 96.9% less" width="800"></p>
 <!-- token-benchmark:summary:end -->
 
 A lean version of [`@tintinweb/pi-subagents`](https://github.com/tintinweb/pi-subagents). It runs the upstream `0.26.2` engine as-is and folds its agent tools into one `subagent` tool with a short schema.
@@ -54,7 +54,8 @@ The model sees one tool, `subagent`, with the operations `run`, `result`, `steer
 }
 ```
 
-- `result` with `agent_id` returns a finished task's output.
+- Use `run_in_background: false` to wait inline when the next step depends on a new agent's result, unless its configuration pins it to background. For background work, let completion notify you instead of polling.
+- `result` with `agent_id` checks status or retrieves the output without waiting. If you need to wait for an already running agent, pass `input: '{"wait":true}'`.
 - `steer` with `agent_id` and `message` redirects a running agent.
 - `help` shows upstream's advanced parameters.
 
@@ -74,7 +75,7 @@ With only this extension enabled, what the model reads on every turn:
 
 | Variant | Breakdown | Total |
 | --- | --- | ---: |
-| Lean `@ssk_dev/pi-subagents-lean@0.26.2` | `subagent` (276) | **276** |
+| Lean `@ssk_dev/pi-subagents-lean@0.26.3` | `subagent` (275) | **275** |
 | Upstream `@tintinweb/pi-subagents@0.26.2` | `Agent` (2,570) + `SubagentWorkflow` (6,020) + `get_subagent_result` (183) + `steer_subagent` (183) | **8,956** |
 
 <sub>Method: Pi 1.4.0, each variant measured in its own temporary process with an empty working directory and configuration. Built-in tools, skills, context files, session history, user messages, other extensions, runtime UI and slash commands are not counted; `before_agent_start` additions are. Tokens are estimated as `ceil(characters / 4)`, not billed tokens.</sub>

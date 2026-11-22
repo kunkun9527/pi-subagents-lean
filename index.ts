@@ -40,7 +40,7 @@ const FACADE_PARAMETERS = Type.Object({
   subagent_type: Type.Optional(
     Type.String({ description: SUBAGENT_TYPE_HELP }),
   ),
-  run_in_background: Type.Optional(Type.Boolean()),
+  run_in_background: Type.Optional(Type.Boolean({ description: "False waits for the result inline." })),
   agent_id: Type.Optional(Type.String()),
   message: Type.Optional(Type.String()),
   input: Type.Optional(Type.String({ description: "JSON object string for advanced parameters." })),
@@ -118,8 +118,8 @@ export function createSubagentsFacade(
       parameters,
       promptGuidelines: [
         "subagent: op=run requires prompt, description (3-5 words), and subagent_type; use workflow for scripted multi-agent orchestration.",
-        "subagent: Put advanced options in input as a JSON object; direct fields override duplicate JSON keys. result uses agent_id; steer uses agent_id and message. Use help only when advanced parameters are unclear.",
-        "subagent: Background completion is notified; never poll or sleep. Summarize results and verify claimed code changes.",
+        "subagent: result and steer need agent_id; steer needs message. Direct fields override input.",
+        `subagent: Await background notifications, not sleep/poll. If blocked, use op=result with input '{"wait":true}' (default: non-blocking). Summarize results; verify code changes.`,
       ],
       prepareArguments: prepareFacadeArguments,
       renderCall(args, theme, context) {

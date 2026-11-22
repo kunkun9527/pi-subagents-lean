@@ -1,6 +1,6 @@
 {
   "name": "@ssk_dev/pi-subagents-lean",
-  "version": "0.26.2",
+  "version": "0.26.3",
   "type": "module",
   "description": "Lean Pi version of @tintinweb/pi-subagents: the full subagent engine behind one compact tool.",
   "license": "MIT",

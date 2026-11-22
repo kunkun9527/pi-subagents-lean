@@ -396,6 +396,15 @@ test("rejects parameters that fail the hidden original schema", async () => {
   assert.equal(calls.length, 0);
 });
 
+test("makes both explicit waits discoverable without requiring help", () => {
+  const pi = makePi();
+  createSubagentsFacade(makeFakeUpstream())(pi);
+  const facade = pi.tools[0];
+
+  assert.match(facade.parameters.properties.run_in_background.description, /false.*waits/i);
+  assert.ok(facade.promptGuidelines.some((line) => line.includes(`op=result with input '{"wait":true}'`)));
+});
+
 test("keeps provider-facing metadata within the facade budget", () => {
   const pi = makePi();
   createSubagentsFacade(makeFakeUpstream())(pi);
